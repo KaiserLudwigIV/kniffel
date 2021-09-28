@@ -1,13 +1,13 @@
 import React from "react";
 import { hooksI } from "../../Player";
 //#region ContentImport & Array
-import Dice1 from "../../content/Dice1.svg";
-import Dice2 from "../../content/Dice2.svg";
-import Dice3 from "../../content/Dice3.svg";
-import Dice4 from "../../content/Dice4.svg";
-import Dice5 from "../../content/Dice5.svg";
-import Dice6 from "../../content/Dice6.svg";
-import Lock from "../../content/Lock.svg";
+import Dice1 from "../../content/dice1.svg";
+import Dice2 from "../../content/dice2.svg";
+import Dice3 from "../../content/dice3.svg";
+import Dice4 from "../../content/dice4.svg";
+import Dice5 from "../../content/dice5.svg";
+import Dice6 from "../../content/dice6.svg";
+import Lock from "../../content/lock.svg";
 const DiceArray: any[] = [Dice1, Dice2, Dice3, Dice4, Dice5, Dice6];
 //#endregion
 
