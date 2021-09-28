@@ -5,6 +5,7 @@ import { Play } from "akar-icons";
 
 interface Props {
 	setAllPlayers: React.Dispatch<React.SetStateAction<PlayerI[]>>;
+	setCurrentPlayer: React.Dispatch<React.SetStateAction<PlayerI | undefined>>;
 }
 
 const addPlayer = (
@@ -91,6 +92,7 @@ export const PlayerCreation = (props: Props) => {
 								(e: string) => new Player(e)
 							);
 							props.setAllPlayers(allPlayers);
+							props.setCurrentPlayer(allPlayers[0]);
 						}}
 					>
 						Start Game

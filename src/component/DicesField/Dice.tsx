@@ -1,4 +1,5 @@
 import React from "react";
+import { hooksI } from "../../Player";
 //#region ContentImport & Array
 import Dice1 from "../../content/Dice1.svg";
 import Dice2 from "../../content/Dice2.svg";
@@ -13,8 +14,7 @@ const DiceArray: any[] = [Dice1, Dice2, Dice3, Dice4, Dice5, Dice6];
 interface Props {
 	augenZahl: number;
 	ind: number;
-	setLock: React.Dispatch<React.SetStateAction<any[]>>;
-	locks: boolean[];
+	locksHook: hooksI<boolean[]>;
 }
 
 export const Dice = (props: Props) => {
@@ -24,19 +24,19 @@ export const Dice = (props: Props) => {
 				src={DiceArray[props.augenZahl - 1]}
 				alt="Dice"
 				onClick={() => {
-					let newArr = [...props.locks];
+					let newArr = [...props.locksHook.state];
 					newArr[props.ind] = !newArr[props.ind];
-					props.setLock(newArr);
+					props.locksHook.set(newArr);
 				}}
 			/>
-			{props.locks[props.ind] && (
+			{props.locksHook.state[props.ind] && (
 				<img
 					src={Lock}
 					alt="Lock"
 					onClick={() => {
-						let newArr = [...props.locks];
+						let newArr = [...props.locksHook.state];
 						newArr[props.ind] = !newArr[props.ind];
-						props.setLock(newArr);
+						props.locksHook.set(newArr);
 					}}
 				/>
 			)}

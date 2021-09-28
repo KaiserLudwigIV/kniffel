@@ -1,18 +1,18 @@
 export class Player implements PlayerI {
 	scores: scores = {
-		einer: 0,
-		zweier: 0,
-		dreier: 0,
-		vierer: 0,
-		fuenfer: 0,
-		sechser: 0,
-		dreierPasch: 0,
-		viererPasch: 0,
-		fullHouse: 0,
-		kleineStrase: 0,
-		groseStrase: 0,
-		yahtzee: 0,
-		chance: 0,
+		Einer: 0,
+		Zweier: 0,
+		Dreier: 0,
+		Vierer: 0,
+		Fünfer: 0,
+		Sechser: 0,
+		"Dreier Pasch": 0,
+		"Vierer Pasch": 0,
+		"Full House": 0,
+		"Kleine Straße": 0,
+		"Große Straße": 0,
+		Yahtzee: 0,
+		Chance: 0,
 	};
 	name: string;
 	constructor(name: string) {
@@ -20,23 +20,28 @@ export class Player implements PlayerI {
 	}
 }
 
-interface scores {
-	einer: number;
-	zweier: number;
-	dreier: number;
-	vierer: number;
-	fuenfer: number;
-	sechser: number;
-	dreierPasch: number;
-	viererPasch: number;
-	fullHouse: number;
-	kleineStrase: number;
-	groseStrase: number;
-	yahtzee: number;
-	chance: number;
+export interface scores {
+	Einer: number;
+	Zweier: number;
+	Dreier: number;
+	Vierer: number;
+	Fünfer: number;
+	Sechser: number;
+	"Dreier Pasch": number;
+	"Vierer Pasch": number;
+	"Full House": number;
+	"Kleine Straße": number;
+	"Große Straße": number;
+	Yahtzee: number;
+	Chance: number;
 }
 
 export interface PlayerI {
 	name: string;
 	scores: scores;
+}
+
+export interface hooksI<T> {
+	state: T;
+	set: React.Dispatch<React.SetStateAction<T>>;
 }

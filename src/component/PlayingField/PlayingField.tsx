@@ -1,114 +1,196 @@
 import React from "react";
-import { PlayerI } from "../../Player";
+import { PlayerI, hooksI, scores } from "../../Player";
 import "./PlayingFieldStyle.scss";
+import { testKniffelCase } from "../../logic";
 
 interface Props {
 	playerData: PlayerI;
-	trys: number;
-	settrys: React.Dispatch<React.SetStateAction<number>>;
-	setdiceArr: React.Dispatch<React.SetStateAction<number[]>>;
+	trysHook: hooksI<number>;
+	diceArrHook: hooksI<number[]>;
+	allPlayersHook: hooksI<PlayerI[]>;
+	setNextPlayer: () => void;
 }
 
 export const PlayingField = (props: Props) => {
-	const pS = props.playerData.scores; // PropSelector
-	const summeOben: number =
-		pS.einer + pS.zweier + pS.dreier + pS.vierer + pS.fuenfer + pS.sechser;
-	const summeUnten: number =
-		pS.dreierPasch + pS.viererPasch + pS.fullHouse + pS.yahtzee + pS.chance;
+	const pS: scores = props.playerData.scores; // PropSelector for readability
+	const summeOben: number = [
+		pS.Einer,
+		pS.Zweier,
+		pS.Dreier,
+		pS.Vierer,
+		pS.Fünfer,
+		pS.Sechser,
+	].reduce((prev, curr) => prev + (curr === -1 ? 0 : curr), 0);
+
+	const summeUnten: number = [
+		pS["Dreier Pasch"],
+		pS["Vierer Pasch"],
+		pS["Full House"],
+		pS["Kleine Straße"],
+		pS["Große Straße"],
+		pS.Yahtzee,
+		pS.Chance,
+	].reduce((prev, curr) => prev + (curr === -1 ? 0 : curr), 0);
+
 	const gesamtSumme: number =
 		summeOben + summeUnten + (summeOben >= 63 ? 35 : 0);
+
+	const checkIfDiced = () => {
+		if (!(props.trysHook.state < 3)) {
+			alert("Bitte Würfel erst!");
+			return false;
+		}
+		return true;
+	};
+	const nextPlayer = () => {
+		props.trysHook.set(3);
+		props.diceArrHook.set([]);
+		props.setNextPlayer();
+	};
+
+	const testNReset = (action: string) => {
+		if (checkIfDiced()) {
+			const kniffelScore = testKniffelCase(props.diceArrHook.state, action);
+			if (kniffelScore || kniffelScore === -1) {
+				const playersInd: number = props.allPlayersHook.state.findIndex(
+					(evt) => evt === props.playerData
+				);
+				return {
+					toSetValue: kniffelScore,
+					pIndex: playersInd,
+					copyOfPlayer: { ...props.playerData },
+					copyOfPlayerArr: [...props.allPlayersHook.state],
+				};
+			}
+			alert("Dieses Feld geht nicht");
+		}
+		return false;
+	};
 
 	return (
 		<div className="PlayingFieldContainer">
 			<div>
-				<span>
-					<h1 className="playerNamePF">{props.playerData.name}</h1>
-					<table>
-						<thead>
-							<tr
-								onClick={() => {
-									if (props.trys < 3) {
-										props.settrys(3);
-										props.setdiceArr([]);
-									}
-								}}
-							>
-								<td>Einer</td>
-								<td>{pS.einer}</td>
-							</tr>
-							<tr>
-								<td>Zweier</td>
-								<td>{pS.zweier}</td>
-							</tr>
-							<tr>
-								<td>Dreier</td>
-								<td>{pS.dreier}</td>
-							</tr>
-							<tr>
-								<td>Vierer</td>
-								<td>{pS.vierer}</td>
-							</tr>
-							<tr>
-								<td>Fünfer</td>
-								<td>{pS.fuenfer}</td>
-							</tr>
-							<tr>
-								<td>Sechser</td>
-								<td>{pS.sechser}</td>
-							</tr>
-							<tr>
-								<td className="thick">Summe oben</td>
-								<td>{summeOben}</td>
-							</tr>
-							<tr>
-								<td className="thick">Bonus</td>
-								<td>{summeOben >= 63 ? 35 : 0}</td>
-							</tr>
-							<tr style={{ backgroundColor: "#103226" }}>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>Dreier Pasch</td>
-								<td>{pS.dreierPasch}</td>
-							</tr>
-							<tr>
-								<td>Vierer Pasch</td>
-								<td>{pS.viererPasch}</td>
-							</tr>
-							<tr>
-								<td>Full House</td>
-								<td>{pS.fullHouse}</td>
-							</tr>
-							<tr>
-								<td>Yahtzee</td>
-								<td>{pS.yahtzee}</td>
-							</tr>
-							<tr>
-								<td>Chance</td>
-								<td>{pS.chance}</td>
-							</tr>
-							<tr>
-								<td className="thick">Summe unten</td>
-								<td>{summeUnten}</td>
-							</tr>
-							<tr style={{ backgroundColor: "#103226" }}>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-							</tr>
-						</tbody>
+				<h1 className="playerNamePF">{props.playerData.name}</h1>
+				<table>
+					<thead>
+						{["Einer", "Zweier", "Dreier", "Vierer", "Fünfer", "Sechser"].map(
+							(evt: string) => (
+								<TrComponent
+									key={Math.random()}
+									textNValue={{
+										text: evt,
+										value: props.playerData.scores[evt as keyof scores],
+									}}
+									testNnextPlayer={{
+										nextPlayer: nextPlayer,
+										testNReset: testNReset,
+									}}
+									setAllPlayer={props.allPlayersHook.set}
+								/>
+							)
+						)}
 
-						<tfoot>
-							<tr>
-								<td className="thick">Gesamtsumme</td>
-								<td>{gesamtSumme}</td>
-							</tr>
-						</tfoot>
-					</table>
-				</span>
+						<tr>
+							<td className="thick">Summe oben</td>
+							<td>{summeOben}</td>
+						</tr>
+						<tr>
+							<td className="thick">Bonus</td>
+							<td>{summeOben >= 63 ? 35 : 0}</td>
+						</tr>
+						<tr style={{ backgroundColor: "#103226" }}>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+					</thead>
+					<tbody>
+						{[
+							"Dreier Pasch",
+							"Vierer Pasch",
+							"Full House",
+							"Kleine Straße",
+							"Große Straße",
+							"Yahtzee",
+							"Chance",
+						].map((evt: string) => (
+							<TrComponent
+								key={Math.random()}
+								textNValue={{
+									text: evt,
+									value: props.playerData.scores[evt as keyof scores],
+								}}
+								testNnextPlayer={{
+									nextPlayer: nextPlayer,
+									testNReset: testNReset,
+								}}
+								setAllPlayer={props.allPlayersHook.set}
+							/>
+						))}
+						<tr>
+							<td className="thick">Summe unten</td>
+							<td>{summeUnten}</td>
+						</tr>
+						<tr style={{ backgroundColor: "#103226" }}>
+							<td>&nbsp;</td>
+							<td>&nbsp;</td>
+						</tr>
+					</tbody>
+
+					<tfoot>
+						<tr>
+							<td className="thick">Gesamtsumme</td>
+							<td>{gesamtSumme}</td>
+						</tr>
+					</tfoot>
+				</table>
 			</div>
 		</div>
+	);
+};
+
+interface TrPropsI {
+	// Some props are getting stuffed into a object for readability in the PlayingField Component
+	// Gets destructured later. Also please dont mind those long types thank you :)
+	textNValue: { text: string; value: number };
+	testNnextPlayer: {
+		testNReset: (action: string) =>
+			| false
+			| {
+					toSetValue: number;
+					pIndex: number;
+					copyOfPlayer: {
+						name: string;
+						scores: scores;
+					};
+					copyOfPlayerArr: PlayerI[];
+			  };
+		nextPlayer: () => void;
+	};
+	setAllPlayer: React.Dispatch<React.SetStateAction<PlayerI[]>>;
+}
+
+const TrComponent = (props: TrPropsI) => {
+	const text = props.textNValue.text;
+	const value = props.textNValue.value;
+	const testNResetFn = props.testNnextPlayer.testNReset;
+
+	return (
+		<tr
+			onClick={() => {
+				if (value !== 0 || value + 1 === -1) return;
+				const setterObj = testNResetFn(text);
+				if (setterObj) {
+					setterObj.copyOfPlayerArr[setterObj.pIndex].scores[
+						text as keyof scores
+					] = setterObj.toSetValue;
+
+					props.setAllPlayer(setterObj.copyOfPlayerArr);
+					props.testNnextPlayer.nextPlayer();
+				}
+			}}
+		>
+			<td>{text}</td>
+			<td>{value === -1 ? "X" : value}</td>
+		</tr>
 	);
 };

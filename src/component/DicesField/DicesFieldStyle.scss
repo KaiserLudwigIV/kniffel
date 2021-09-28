@@ -1,21 +1,31 @@
 .DicesFieldContainer {
 	width: 65vw;
-	min-height: 100%;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	margin-left: 0.5rem;
+
 	& > div:nth-child(1) {
 		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		gap: 10rem;
 		justify-content: center;
+		align-items: center;
+		width: 100%;
+		min-height: 90%;
+		& > div {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 7rem 10rem;
+		}
 	}
+
 	& > div:nth-child(2) {
 		margin-top: auto;
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
+
 		h2 {
 			color: #fff;
 			margin-left: auto;
@@ -31,6 +41,7 @@
 	font-weight: 600;
 	border: none;
 	border-radius: 0.3rem;
+
 	&:hover {
 		background-color: red;
 		cursor: pointer;
@@ -42,19 +53,23 @@
 
 .diceLock {
 	width: 5rem;
+	height: 5rem;
 	position: relative;
-	background-color: cornflowerblue;
 	img {
 		width: 100%;
-		position: absolute;
+		height: 100%;
+
 		&:hover {
 			cursor: pointer;
 		}
+
 		&:nth-child(2) {
-			padding: 0.2rem;
+			position: absolute;
+			padding: 0.3rem;
 			border-radius: 0.4rem;
 			background-color: rgb(255, 127, 127);
 			width: 3rem;
+			height: 3rem;
 			top: 4rem;
 			right: -1.5rem;
 		}
